@@ -5,24 +5,27 @@
 #                                                     +:+ +:+         +:+      #
 #    By: lde-batz <lde-batz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2020/07/03 16:57:38 by lde-bat           #+#    #+#              #
-#    Updated: 2021/01/14 15:43:10 by lde-batz         ###   ########.fr        #
+#    Created: 2021/01/12 17:43:03 by lde-batz          #+#    #+#              #
+#    Updated: 2021/01/14 14:59:14 by lde-batz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME =	dr_quine
+NAME =	dr_quine_asm
 
-CFLAG := -Wall -Wextra -Werror
-CC := gcc $(CFLAG)
+CFLAG := -f macho64
+CC :=   nasm $(CFLAG)
 
 SRC_DIR := ./
 OBJ_DIR := obj/
 
-SRC += Colleen.c
-SRC += Grace.c
-SRC += Sully.c
+LDFLAG := -macosx_version_min 10.8 -lSystem -no_pie
+LD := ld $(LDFLAG)
 
-OBJ := $(addprefix $(OBJ_DIR), $(SRC:.c=.o))
+SRC += Colleen.s
+SRC += Grace.s
+SRC += Sully.s
+
+OBJ := $(addprefix $(OBJ_DIR), $(SRC:.s=.o))
 
 SRC := $(addprefix $(SRC_DIR), $(SRC))
 
@@ -32,10 +35,10 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 
-$(OBJ_DIR)%.o: $(SRC_DIR)%.c
+$(OBJ_DIR)%.o: $(SRC_DIR)%.s
 	mkdir -p $(OBJ_DIR)
-	$(CC) -c $< -o $@
-	$(CC) -o $* $<
+	$(CC) $< -o $@
+	$(LD) -o $* $@
 	printf '\033[32m[ ✔ ] %s\n\033[0m' "$<"
 
 move:
@@ -44,7 +47,7 @@ move:
 	mv Sullys Sully
 
 clean:
-	rm -f Grace_kid.c
+	rm -f Grace_kid.s
 	rm -rf $(OBJ_DIR)
 	printf '\033[31m[ ✔ ] %s\n\033[0m' "Clean dr_quine"
 
